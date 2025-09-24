@@ -1,89 +1,208 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Welcome to Firebase Hosting</title>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MonSite Officiel</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* RESET & BASE */
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family: 'Poppins', sans-serif; line-height:1.6; color:#333; }
+    a { text-decoration:none; color: inherit; }
+    section { padding:80px 20px; }
+    h1,h2,h3 { margin-bottom:20px; }
 
-    <!-- update the version number as needed -->
-    <script defer src="/__/firebase/12.3.0/firebase-app-compat.js"></script>
-    <!-- include only the Firebase features as you need -->
-    <script defer src="/__/firebase/12.3.0/firebase-auth-compat.js"></script>
-    <script defer src="/__/firebase/12.3.0/firebase-database-compat.js"></script>
-    <script defer src="/__/firebase/12.3.0/firebase-firestore-compat.js"></script>
-    <script defer src="/__/firebase/12.3.0/firebase-functions-compat.js"></script>
-    <script defer src="/__/firebase/12.3.0/firebase-messaging-compat.js"></script>
-    <script defer src="/__/firebase/12.3.0/firebase-storage-compat.js"></script>
-    <script defer src="/__/firebase/12.3.0/firebase-analytics-compat.js"></script>
-    <script defer src="/__/firebase/12.3.0/firebase-remote-config-compat.js"></script>
-    <script defer src="/__/firebase/12.3.0/firebase-performance-compat.js"></script>
-    <!-- 
-      initialize the SDK after all desired features are loaded, set useEmulator to false
-      to avoid connecting the SDK to running emulators.
-    -->
-    <script defer src="/__/firebase/init.js?useEmulator=true"></script>
+    /* COLORS */
+    :root {
+      --primary: #4F46E5;
+      --secondary: #6366F1;
+      --accent: #10B981;
+      --light: #F3F4F6;
+      --dark: #111827;
+    }
 
-    <style media="screen">
-      body { background: #ECEFF1; color: rgba(0,0,0,0.87); font-family: Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; }
-      #message { background: white; max-width: 360px; margin: 100px auto 16px; padding: 32px 24px; border-radius: 3px; }
-      #message h2 { color: #ffa100; font-weight: bold; font-size: 16px; margin: 0 0 8px; }
-      #message h1 { font-size: 22px; font-weight: 300; color: rgba(0,0,0,0.6); margin: 0 0 16px;}
-      #message p { line-height: 140%; margin: 16px 0 24px; font-size: 14px; }
-      #message a { display: block; text-align: center; background: #039be5; text-transform: uppercase; text-decoration: none; color: white; padding: 16px; border-radius: 4px; }
-      #message, #message a { box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24); }
-      #load { color: rgba(0,0,0,0.4); text-align: center; font-size: 13px; }
-      @media (max-width: 600px) {
-        body, #message { margin-top: 0; background: white; box-shadow: none; }
-        body { border-top: 16px solid #ffa100; }
-      }
-    </style>
-  </head>
-  <body>
-    <div id="message">
-      <h2>Welcome</h2>
-      <h1>Firebase Hosting Setup Complete</h1>
-      <p>You're seeing this because you've successfully setup Firebase Hosting. Now it's time to go build something extraordinary!</p>
-      <a target="_blank" href="https://firebase.google.com/docs/hosting/">Open Hosting Documentation</a>
+    /* HEADER */
+    header {
+      display:flex; justify-content: space-between; align-items:center;
+      padding:20px 80px; background:var(--primary); color:white;
+      position: sticky; top:0; z-index:1000;
+    }
+    header nav a { margin-left:30px; font-weight:600; transition:0.3s; }
+    header nav a:hover { color:var(--accent); }
+
+    /* HERO */
+    .hero {
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      text-align:center; min-height:90vh; background:linear-gradient(to right, #6366F1, #4F46E5);
+      color:white; position: relative;
+    }
+    .hero h1 { font-size:3rem; margin-bottom:20px; }
+    .hero p { font-size:1.2rem; margin-bottom:40px; max-width:600px; }
+    .btn-primary {
+      background:var(--accent); color:white; padding:15px 30px; border-radius:50px;
+      font-weight:600; transition:0.3s;
+    }
+    .btn-primary:hover { transform: translateY(-3px); box-shadow:0 8px 20px rgba(0,0,0,0.2); }
+
+    /* SECTIONS */
+    .section-title { text-align:center; margin-bottom:60px; color:var(--dark); }
+    .features { display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:40px; max-width:1200px; margin:0 auto; }
+    .feature-card {
+      background:white; padding:30px; border-radius:20px; box-shadow:0 8px 20px rgba(0,0,0,0.1); transition:0.3s;
+    }
+    .feature-card:hover { transform: translateY(-10px); box-shadow:0 12px 25px rgba(0,0,0,0.15); }
+    .feature-card h3 { margin-bottom:15px; color:var(--primary); }
+
+    /* ABOUT */
+    .about { background:var(--light); display:flex; flex-wrap:wrap; align-items:center; gap:40px; max-width:1200px; margin:0 auto; }
+    .about-text { flex:1; }
+    .about-image { flex:1; }
+    .about-image img { width:100%; border-radius:20px; }
+
+    /* TEAM */
+    .team { max-width:1200px; margin:0 auto; display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:40px; }
+    .team-member { text-align:center; background:white; padding:20px; border-radius:20px; box-shadow:0 8px 20px rgba(0,0,0,0.1); transition:0.3s; }
+    .team-member img { width:100%; border-radius:50%; margin-bottom:15px; }
+    .team-member h4 { color:var(--primary); margin-bottom:5px; }
+    .team-member p { font-size:0.9rem; color:#555; }
+
+    /* CONTACT */
+    .contact-form { max-width:600px; margin:0 auto; display:flex; flex-direction:column; gap:20px; }
+    .contact-form input, .contact-form textarea {
+      padding:15px; border-radius:10px; border:1px solid #ccc; font-size:1rem;
+    }
+    .contact-form button { padding:15px; border:none; border-radius:50px; background:var(--primary); color:white; font-weight:600; cursor:pointer; transition:0.3s; }
+    .contact-form button:hover { background:var(--secondary); }
+
+    /* FOOTER */
+    footer { background:var(--dark); color:white; text-align:center; padding:40px 20px; }
+
+    /* ANIMATIONS */
+    .fade-up { opacity:0; transform:translateY(30px); transition: all 0.8s ease-out; }
+    .fade-up.show { opacity:1; transform:translateY(0); }
+
+    @media(max-width:900px){
+      header { padding:20px 40px; }
+      .hero h1 { font-size:2.2rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="logo"><h2>MonSite</h2></div>
+    <nav>
+      <a href="#features">Services</a>
+      <a href="#about">À propos</a>
+      <a href="#team">Équipe</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero">
+    <h1>Bienvenue sur MonSite Officiel</h1>
+    <p>Nous transformons vos idées en réalité avec des solutions modernes, innovantes et fiables. Découvrez notre expertise et rejoignez notre communauté de clients satisfaits.</p>
+    <a href="#contact" class="btn-primary">Nous contacter</a>
+  </section>
+
+  <!-- FEATURES -->
+  <section id="features">
+    <h2 class="section-title">Nos Services</h2>
+    <div class="features">
+      <div class="feature-card fade-up">
+        <h3>Développement Web</h3>
+        <p>Création de sites web modernes, performants et responsives, adaptés à tous les types d'entreprises.</p>
+      </div>
+      <div class="feature-card fade-up">
+        <h3>Applications Mobiles</h3>
+        <p>Développement d'applications mobiles sur mesure pour Android et iOS, avec interface intuitive et fluide.</p>
+      </div>
+      <div class="feature-card fade-up">
+        <h3>Stratégie Digitale</h3>
+        <p>Optimisation de votre présence en ligne avec SEO, marketing digital et solutions personnalisées.</p>
+      </div>
+      <div class="feature-card fade-up">
+        <h3>Support et Maintenance</h3>
+        <p>Assistance technique continue et maintenance proactive pour garantir la sécurité et la performance de vos plateformes.</p>
+      </div>
     </div>
-    <p id="load">Firebase SDK Loading&hellip;</p>
+  </section>
 
-    <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        const loadEl = document.querySelector('#load');
-        // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
-        // // The Firebase SDK is initialized and available here!
-        //
-        // firebase.auth().onAuthStateChanged(user => { });
-        // firebase.database().ref('/path/to/ref').on('value', snapshot => { });
-        // firebase.firestore().doc('/foo/bar').get().then(() => { });
-        // firebase.functions().httpsCallable('yourFunction')().then(() => { });
-        // firebase.messaging().requestPermission().then(() => { });
-        // firebase.storage().ref('/path/to/ref').getDownloadURL().then(() => { });
-        // firebase.analytics(); // call to activate
-        // firebase.analytics().logEvent('tutorial_completed');
-        // firebase.performance(); // call to activate
-        //
-        // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
+  <!-- ABOUT -->
+  <section id="about">
+    <h2 class="section-title">À propos de nous</h2>
+    <div class="about">
+      <div class="about-text fade-up">
+        <h3>Notre mission</h3>
+        <p>Chez MonSite, nous croyons que chaque projet mérite une approche unique. Nous combinons expertise technique et créativité pour offrir des solutions digitales qui font la différence.</p>
+        <p>Notre équipe travaille main dans la main avec nos clients pour transformer leurs idées en produits concrets et performants, en respectant délais et budgets.</p>
+      </div>
+      <div class="about-image fade-up">
+        <img src="https://images.unsplash.com/photo-1556761175-129418cb2dfe?auto=format&fit=crop&w=800&q=80" alt="À propos">
+      </div>
+    </div>
+  </section>
 
-        try {
-          let app = firebase.app();
-          let features = [
-            'auth', 
-            'database', 
-            'firestore',
-            'functions',
-            'messaging', 
-            'storage', 
-            'analytics', 
-            'remoteConfig',
-            'performance',
-          ].filter(feature => typeof app[feature] === 'function');
-          loadEl.textContent = `Firebase SDK loaded with ${features.join(', ')}`;
-        } catch (e) {
-          console.error(e);
-          loadEl.textContent = 'Error loading the Firebase SDK, check the console.';
-        }
+  <!-- TEAM -->
+  <section id="team">
+    <h2 class="section-title">Notre Équipe</h2>
+    <div class="team">
+      <div class="team-member fade-up">
+        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Membre équipe">
+        <h4>Amir Dupont</h4>
+        <p>CEO & Fondateur</p>
+      </div>
+      <div class="team-member fade-up">
+        <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Membre équipe">
+        <h4>Youssouf Kader</h4>
+        <p>CTO & Lead Developer</p>
+      </div>
+      <div class="team-member fade-up">
+        <img src="https://randomuser.me/api/portraits/men/45.jpg" alt="Membre équipe">
+        <h4>Lina Moreau</h4>
+        <p>Designer UX/UI</p>
+      </div>
+      <div class="team-member fade-up">
+        <img src="https://randomuser.me/api/portraits/women/48.jpg" alt="Membre équipe">
+        <h4>Samir Benali</h4>
+        <p>Marketing & Communication</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <h2 class="section-title">Contactez-nous</h2>
+    <form class="contact-form fade-up">
+      <input type="text" placeholder="Nom" required>
+      <input type="email" placeholder="Email" required>
+      <textarea placeholder="Votre message" rows="5" required></textarea>
+      <button type="submit">Envoyer</button>
+    </form>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>© 2025 MonSite. Tous droits réservés.</p>
+    <p>Adresse: 123 Rue Exemple, Montréal, QC | Téléphone: +1 514 123 4567</p>
+  </footer>
+
+  <!-- JS ANIMATIONS -->
+  <script>
+    const faders = document.querySelectorAll('.fade-up');
+    const appearOptions = { threshold: 0.2, rootMargin: "0px 0px -50px 0px" };
+    const appearOnScroll = new IntersectionObserver(function(entries, observer) {
+      entries.forEach(entry => {
+        if(!entry.isIntersecting) return;
+        entry.target.classList.add('show');
+        observer.unobserve(entry.target);
       });
-    </script>
-  </body>
+    }, appearOptions);
+    faders.forEach(fader => { appearOnScroll.observe(fader); });
+  </script>
+
+</body>
 </html>
