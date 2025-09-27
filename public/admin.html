@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ONTech-cloud | Admin Dashboard</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #0f172a;
+      color: #f8fafc;
+    }
+
+    header {
+      background: #1e293b;
+      padding: 20px 50px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    header h1 {
+      font-size: 1.5rem;
+      color: #38bdf8;
+    }
+
+    .dashboard {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      padding: 50px;
+    }
+
+    .card {
+      background: #1e293b;
+      border-radius: 12px;
+      padding: 30px;
+      text-align: center;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+      cursor: pointer;
+      transition: transform 0.3s ease, background 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      background: #334155;
+    }
+
+    .card h2 {
+      margin-bottom: 15px;
+      font-size: 1.5rem;
+      color: #38bdf8;
+    }
+
+    .card p {
+      font-size: 1rem;
+      color: #cbd5e1;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      margin-top: 30px;
+      background: #1e293b;
+      font-size: 0.9rem;
+      color: #94a3b8;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>ONTech-cloud | Admin</h1>
+  </header>
+
+  <section class="dashboard">
+    <div class="card" onclick="location.href='admin-contacts.html'">
+      <h2>📩 Contacts</h2>
+      <p>Voir les messages envoyés via le formulaire de contact.</p>
+    </div>
+
+    <div class="card" onclick="location.href='admin-soumission.html'">
+      <h2>📂 Soumissions</h2>
+      <p>Accéder aux projets soumis par les clients (à venir).</p>
+    </div>
+  </section>
+
+  <footer>
+    © 2025 ONTech-cloud. Admin Dashboard.
+  </footer>
+
+</body>
+</html>

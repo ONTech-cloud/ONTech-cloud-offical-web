@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Admin — Soumissions | ONTech-Cloud</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0b0f12;
+    --card:#0f1720;
+    --muted:#94a3b8;
+    --accent:#00d4ff;
+    --glass: rgba(255,255,255,0.03);
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:'Poppins',system-ui,Segoe UI,Roboto,Arial;
+    background: linear-gradient(180deg,var(--bg), #071018);
+    color:#e6eef8;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:16px;
+    padding:20px 28px;
+    backdrop-filter: blur(6px);
+    border-bottom:1px solid rgba(255,255,255,0.03);
+    position:sticky; top:0; z-index:50;
+    background: linear-gradient(180deg, rgba(11,15,18,0.6), rgba(7,10,12,0.4));
+  }
+  header h1{ margin:0; font-size:1.1rem; color:var(--accent); letter-spacing:0.6px }
+  header .sub{ color:var(--muted); font-size:0.9rem }
+
+  .wrap{ max-width:1200px; margin:26px auto; padding:0 20px; }
+
+  .top{
+    display:flex; gap:20px; align-items:center; margin-bottom:18px;
+  }
+  .card{
+    background: linear-gradient(180deg,var(--card), #091119);
+    border-radius:14px;
+    padding:18px;
+    box-shadow:0 8px 30px rgba(0,0,0,0.6);
+    border:1px solid var(--glass);
+  }
+
+  .stats{ display:flex; gap:14px; align-items:center }
+  .stat{ min-width:140px; padding:12px 16px; border-radius:10px; }
+  .stat h3{ margin:0; font-size:1.05rem; color:var(--accent) }
+  .stat p{ margin:6px 0 0; color:var(--muted); font-size:0.9rem }
+
+  .controls{ display:flex; gap:12px; align-items:center; margin-bottom:16px; flex-wrap:wrap }
+  .search{
+    display:flex; gap:8px; align-items:center;
+    background:#081018; padding:8px 10px; border-radius:10px; border:1px solid rgba(255,255,255,0.03);
+  }
+  .search input{ background:transparent; border:none; color:inherit; width:240px; outline:none; padding:8px; }
+  .select, .btn { padding:8px 12px; border-radius:10px; border:none; cursor:pointer; background:linear-gradient(135deg,#0f2a3a,#083248); color: #e6eef8;}
+  .btn.primary{ background: linear-gradient(135deg,var(--accent),#0077c9); color:#021018; font-weight:600; }
+  .btn.ghost{ background:transparent; border:1px solid rgba(255,255,255,0.04) }
+
+  .layout{ display:grid; grid-template-columns: 1fr 360px; gap:18px; align-items:start; }
+  @media (max-width:980px){ .layout{ grid-template-columns: 1fr; } .rightPane{ order:2 } }
+
+  /* list */
+  .list { display:flex; flex-direction:column; gap:12px; }
+  .item{
+    display:flex; gap:12px; align-items:flex-start; padding:14px; border-radius:12px; transition:transform .12s;
+    border:1px solid rgba(255,255,255,0.02);
+  }
+  .item:hover{ transform: translateY(-4px); box-shadow:0 12px 30px rgba(0,0,0,0.6) }
+  .item .left{ width:56px; height:56px; border-radius:10px; background:linear-gradient(135deg,#051523,#0b2b3a); display:flex; align-items:center; justify-content:center; font-weight:700; color:var(--accent) }
+  .item .main{ flex:1; }
+  .item h4{ margin:0 0 6px; font-size:1rem }
+  .meta{ color:var(--muted); font-size:0.88rem; margin-bottom:8px }
+  .tags{ display:flex; gap:8px; flex-wrap:wrap }
+  .tag{ background: rgba(255,255,255,0.02); padding:6px 8px; border-radius:8px; color:var(--muted); font-size:0.82rem }
+
+  .actions { display:flex; gap:8px; align-items:center }
+
+  /* details pane */
+  .rightPane .card{ padding:16px; }
+  .details h3{ margin:6px 0 12px; color:var(--accent) }
+  .field{ margin-bottom:10px }
+  .field strong{ display:block; color:var(--muted); font-size:0.85rem; margin-bottom:6px }
+  .field p{ margin:0; color:#e6eef8 }
+
+  /* modal */
+  .modal-backdrop{ position:fixed; inset:0; background:rgba(2,6,23,0.6); display:flex; align-items:center; justify-content:center; z-index:1000;}
+  .modal{ background:linear-gradient(180deg,#0f1720,#071018); border-radius:12px; padding:18px; width:540px; max-width:92%; box-shadow:0 18px 60px rgba(0,0,0,0.8); border:1px solid rgba(255,255,255,0.03)}
+  .modal h3{ margin-top:0; color:var(--accent) }
+  .modal textarea, .modal input{ width:100%; padding:10px; border-radius:10px; border:1px solid rgba(255,255,255,0.04); background:#071018; color:inherit; margin-top:8px }
+
+  /* tiny badges */
+  .badge{ background: rgba(255,255,255,0.04); padding:6px 8px; border-radius:999px; color:var(--muted); font-size:0.8rem }
+
+  /* toast */
+  .toast{ position:fixed; right:18px; bottom:18px; background:linear-gradient(135deg,var(--accent),#0077c9); color:#021018; padding:12px 18px; border-radius:10px; box-shadow:0 10px 30px rgba(0,0,0,0.6); display:none; z-index:1200}
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>ONTech-Cloud — Admin</h1>
+    <div class="sub">Gestion des soumissions</div>
+  </div>
+  <div class="sub">Connexion: <span id="adminEmail" style="color:var(--muted)">admin@ontech.cloud</span></div>
+</header>
+
+<div class="wrap">
+  <div class="top">
+    <div class="card stats">
+      <div class="stat"><h3 id="countTotal">—</h3><p>Total soumissions</p></div>
+      <div class="stat"><h3 id="countPending">—</h3><p>En attente</p></div>
+      <div class="stat"><h3 id="countAccepted">—</h3><p>Acceptées</p></div>
+      <div class="stat"><h3 id="countRejected">—</h3><p>Refusées</p></div>
+    </div>
+
+    <div style="flex:1"></div>
+
+    <div class="card" style="display:flex; gap:10px; align-items:center;">
+      <div class="controls">
+        <div class="search card">
+          <svg width="18" height="18" viewBox="0 0 24 24" style="opacity:.8"><path fill="currentColor" d="M9.5 3A6.5 6.5 0 1 0 16 9.5 6.507 6.507 0 0 0 9.5 3zm0 2A4.5 4.5 0 1 1 5 9.5 4.505 4.505 0 0 1 9.5 5zM21 21l-4.35-4.35"/></svg>
+          <input id="searchInput" placeholder="Recherche par nom, email, entreprise..." />
+        </div>
+
+        <select id="filterStatus" class="select">
+          <option value="all">Tous les statuts</option>
+          <option value="pending">En attente</option>
+          <option value="accepted">Accepté</option>
+          <option value="rejected">Refusé</option>
+        </select>
+
+        <select id="sortBy" class="select">
+          <option value="newest">Plus récentes</option>
+          <option value="oldest">Plus anciennes</option>
+        </select>
+
+        <button id="exportBtn" class="btn ghost">Exporter CSV</button>
+        <button id="bulkBtn" class="btn ghost">Actions groupées</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="layout">
+    <!-- LEFT: list -->
+    <div>
+      <div class="card">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px">
+          <strong>Soumissions</strong>
+          <small class="badge" id="lastUpdated">—</small>
+        </div>
+
+        <div id="list" class="list"></div>
+        <div id="empty" style="text-align:center; color:var(--muted); padding:18px; display:none">Aucune soumission trouvée.</div>
+      </div>
+    </div>
+
+    <!-- RIGHT: details -->
+    <aside class="rightPane">
+      <div class="card">
+        <div class="details" id="detailsPane">
+          <h3>Sélectionnez une soumission</h3>
+          <p class="sub" style="color:var(--muted)">Cliquez sur "Voir" pour afficher les détails.</p>
+        </div>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<!-- modals -->
+<div id="emailModal" class="modal-backdrop" style="display:none">
+  <div class="modal">
+    <h3 id="emailModalTitle">Envoyer un e-mail</h3>
+    <div><strong>À:</strong> <span id="emailRecipient" style="color:var(--muted)"></span></div>
+    <input id="emailFrom" placeholder="Votre adresse (reply-to)" />
+    <input id="emailSubject" placeholder="Sujet" />
+    <textarea id="emailBody" placeholder="Message..."></textarea>
+    <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:10px">
+      <button id="emailCancel" class="btn ghost">Annuler</button>
+      <button id="emailSend" class="btn primary">Envoyer</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<!-- EmailJS CDN (global) -->
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+
+<!-- Firebase modules and app logic -->
+<script type="module">
+/* =========================
+   CONFIG - remplace ces valeurs par les tiennes
+   ========================= */
+const FIREBASE_CONFIG = {
+  apiKey: "YOUR_FIREBASE_APIKEY",
+  authDomain: "YOUR_FIREBASE_AUTHDOMAIN",
+  projectId: "YOUR_FIREBASE_PROJECTID",
+  storageBucket: "YOUR_FIREBASE_STORAGEBUCKET",
+  messagingSenderId: "YOUR_FIREBASE_MESSAGINGSENDERID",
+  appId: "YOUR_FIREBASE_APPID"
+};
+
+// EmailJS config - remplace les IDs après avoir créé les templates
+const EMAILJS_SERVICE_ID = "service_e3fr8fe"; // fourni
+const EMAILJS_TEMPLATE_ACCEPT = "template_accept_id"; // remplace par ton template id accept
+const EMAILJS_TEMPLATE_REJECT  = "template_reject_id"; // remplace par ton template id reject
+const EMAILJS_PUBLIC_KEY = "YOUR_EMAILJS_PUBLIC_KEY"; // remplace par ta clé publique
+
+/* =========================
+   Imports Firebase (ES modules)
+   ========================= */
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
+import {
+  getFirestore, collection, onSnapshot, query, orderBy,
+  doc, updateDoc, deleteDoc, getDocs
+} from "https://www.gstatic.com/firebasejs/10.1.0/firebase-firestore.js";
+
+/* =========================
+   Init services
+   ========================= */
+emailjs.init(EMAILJS_PUBLIC_KEY); // initialiser EmailJS (global)
+
+const app = initializeApp(FIREBASE_CONFIG);
+const db = getFirestore(app);
+const submissionsRef = collection(db, "submissions");
+
+/* =========================
+   UI references
+   ========================= */
+const listEl = document.getElementById('list');
+const detailsPane = document.getElementById('detailsPane');
+const countTotal = document.getElementById('countTotal');
+const countPending = document.getElementById('countPending');
+const countAccepted = document.getElementById('countAccepted');
+const countRejected = document.getElementById('countRejected');
+const lastUpdated = document.getElementById('lastUpdated');
+const toast = document.getElementById('toast');
+
+const searchInput = document.getElementById('searchInput');
+const filterStatus = document.getElementById('filterStatus');
+const sortBy = document.getElementById('sortBy');
+const exportBtn = document.getElementById('exportBtn');
+const bulkBtn = document.getElementById('bulkBtn');
+
+/* =========================
+   State
+   ========================= */
+let submissions = []; // local cache
+let selectedId = null;
+let selectionSet = new Set();
+
+/* =========================
+   Utility
+   ========================= */
+function showToast(text, ms=2500){
+  toast.textContent = text;
+  toast.style.display = 'block';
+  setTimeout(()=> toast.style.display='none', ms);
+}
+
+function formatDate(ts){
+  try { return new Date(ts.seconds ? ts.seconds*1000 : ts).toLocaleString(); }
+  catch(e){ return String(ts); }
+}
+
+/* =========================
+   Render list & details
+   ========================= */
+function renderList(items){
+  listEl.innerHTML = '';
+  if(!items.length){ document.getElementById('empty').style.display='block'; return; }
+  document.getElementById('empty').style.display='none';
+
+  items.forEach(doc => {
+    const id = doc.id;
+    const d = doc.data;
+    const item = document.createElement('div');
+    item.className = 'item card';
+    item.innerHTML = `
+      <div class="left">${(d.fullname||'U').split(' ').map(s=>s[0]).slice(0,2).join('').toUpperCase()}</div>
+      <div class="main">
+        <h4>${d.fullname || '—'} <span style="margin-left:8px" class="badge">${d.company || '—'}</span></h4>
+        <div class="meta">${d.email || '—'} • ${d.city || ''} • ${formatDate(d.timestamp)||''}</div>
+        <div class="tags">${(d.serviceType? (Array.isArray(d.serviceType)?d.serviceType.join(' • '):d.serviceType) : '')}</div>
+      </div>
+      <div class="actions">
+        <button class="btn" data-id="${id}" data-action="view">Voir</button>
+        <button class="btn" data-id="${id}" data-action="accept" title="Accepter">✅</button>
+        <button class="btn" data-id="${id}" data-action="reject" title="Refuser">❌</button>
+        <button class="btn" data-id="${id}" data-action="copy">📋</button>
+        <input type="checkbox" data-id="${id}" class="selbox" style="width:20px; height:20px; margin-left:6px;"/>
+      </div>
+    `;
+    listEl.appendChild(item);
+
+    // events
+    item.querySelector('[data-action=view]').addEventListener('click', ()=> showDetails(doc));
+    item.querySelector('[data-action=accept]').addEventListener('click', ()=> handleAccept(doc));
+    item.querySelector('[data-action=reject]').addEventListener('click', ()=> handleReject(doc));
+    item.querySelector('[data-action=copy]').addEventListener('click', ()=> {
+      navigator.clipboard?.writeText(d.email || '').then(()=> showToast('Email copié')).catch(()=>{/*ignore*/});
+    });
+    item.querySelector('.selbox').addEventListener('change', (e)=>{
+      if(e.target.checked) selectionSet.add(id); else selectionSet.delete(id);
+    });
+  });
+}
+
+function showDetails(doc){
+  selectedId = doc.id;
+  const d = doc.data;
+  detailsPane.innerHTML = `
+    <h3>${d.fullname || '—'}</h3>
+    <div class="field"><strong>Email</strong><p>${d.email || '—'}</p></div>
+    <div class="field"><strong>Téléphone</strong><p>${d.phone || '—'}</p></div>
+    <div class="field"><strong>Entreprise</strong><p>${d.company || '—'}</p></div>
+    <div class="field"><strong>Secteur</strong><p>${d.sector || '—'}</p></div>
+    <div class="field"><strong>Adresse</strong><p>${d.address || '—'}</p></div>
+    <div class="field"><strong>Services demandés</strong><p>${d.serviceType ? (Array.isArray(d.serviceType)?d.serviceType.join(', '):d.serviceType) : '—' }</p></div>
+    <div class="field"><strong>Objectif</strong><p>${d.objective||'—'}</p></div>
+    <div class="field"><strong>Description</strong><p style="white-space:pre-wrap">${d.description||'—'}</p></div>
+    <div class="field"><strong>Budget</strong><p>${d.budget||'—'}</p></div>
+    <div class="field"><strong>Délai</strong><p>${d.deadline||'—'}</p></div>
+    ${(d.fileURL? `<div class="field"><strong>Pièce jointe</strong><p><a href="${d.fileURL}" target="_blank">Télécharger</a></p></div>`:'')}
+    <div style="display:flex; gap:8px; margin-top:12px">
+      <button class="btn primary" id="detailAccept">Accepter</button>
+      <button class="btn" id="detailReject">Refuser</button>
+      <button class="btn ghost" id="detailMark">Marquer lu</button>
+      <button class="btn ghost" id="detailDelete">Supprimer</button>
+      <button class="btn ghost" id="detailMail">Contacter</button>
+    </div>
+  `;
+
+  // wire up detail actions
+  document.getElementById('detailAccept').addEventListener('click', ()=> handleAccept(doc));
+  document.getElementById('detailReject').addEventListener('click', ()=> handleReject(doc));
+  document.getElementById('detailMark').addEventListener('click', ()=> toggleRead(doc));
+  document.getElementById('detailDelete').addEventListener('click', ()=> deleteSubmission(doc));
+  document.getElementById('detailMail').addEventListener('click', ()=> openEmailModal(doc.data.email, doc));
+}
+
+/* =========================
+   Actions: accept/reject/send email/delete/mark read
+   ========================= */
+
+async function updateStatus(docRefId, status){
+  try{
+    const ref = doc(db, "submissions", docRefId);
+    await updateDoc(ref, { status, updatedAt: new Date() });
+    showToast(`Statut mis à jour: ${status}`);
+  }catch(e){ console.error(e); showToast('Erreur status'); }
+}
+
+async function handleAccept(doc){
+  // open modal to customize message then send - prefill with template
+  openEmailModal(doc.data.email, doc, 'accept');
+}
+
+async function handleReject(doc){
+  openEmailModal(doc.data.email, doc, 'reject');
+}
+
+async function toggleRead(doc){
+  const ref = doc(db, "submissions", doc.id);
+  try{
+    await updateDoc(ref, { seen: !doc.data.seen });
+    showToast('Marqué lu/non-lu');
+  }catch(e){ console.error(e); showToast('Erreur'); }
+}
+
+async function deleteSubmission(doc){
+  if(!confirm('Supprimer définitivement cette soumission ?')) return;
+  try{
+    await deleteDoc(doc(db, "submissions", doc.id));
+    showToast('Supprimé');
+    detailsPane.innerHTML = '<h3>Sélectionnez une soumission</h3>';
+  }catch(e){ console.error(e); showToast('Erreur suppression'); }
+}
+
+/* =========================
+   Email modal & EmailJS send
+   ========================= */
+const emailModal = document.getElementById('emailModal');
+const emailRecipient = document.getElementById('emailRecipient');
+const emailFrom = document.getElementById('emailFrom');
+const emailSubject = document.getElementById('emailSubject');
+const emailBody = document.getElementById('emailBody');
+const emailCancel = document.getElementById('emailCancel');
+const emailSend = document.getElementById('emailSend');
+
+let currentSending = { id:null, action:null }; // track
+
+emailCancel.addEventListener('click', ()=> emailModal.style.display='none');
+
+function openEmailModal(toEmail, doc=null, action=null){
+  emailModal.style.display = 'flex';
+  emailRecipient.textContent = toEmail || '';
+  emailFrom.value = ''; emailSubject.value = action==='accept' ? '✅ Votre projet a été accepté' : (action==='reject' ? '❌ Votre projet' : 'Sujet...');
+  emailBody.value = action==='accept' ? 'Bonjour,\n\nFélicitations — votre projet a été accepté ...\n\nCordialement,\nONTech-Cloud' : (action==='reject' ? 'Bonjour,\n\nMerci pour votre soumission. Après examen, nous ne pouvons pas la retenir...' : '');
+  currentSending = { id: doc ? doc.id : null, action };
+}
+
+emailSend.addEventListener('click', async ()=>{
+  const to = emailRecipient.textContent;
+  const from = emailFrom.value.trim();
+  const subject = emailSubject.value.trim();
+  const message = emailBody.value.trim();
+  if(!to || !from || !subject || !message){ alert('Remplis tous les champs'); return; }
+
+  emailSend.disabled = true;
+  try{
+    // template params — adapte aux variables que tu as dans ton template EmailJS
+    const templateParams = { to_email: to, from_email: from, subject, message };
+
+    // send via EmailJS
+    const res = await emailjs.send(EMAILJS_SERVICE_ID, (currentSending.action === 'accept' ? EMAILJS_TEMPLATE_ACCEPT : EMAILJS_TEMPLATE_REJECT) , templateParams);
+    showToast('Email envoyé');
+    emailModal.style.display='none';
+
+    // update status in Firestore if applicable
+    if(currentSending.id && currentSending.action){
+      await updateStatus(currentSending.id, currentSending.action === 'accept' ? 'accepted' : 'rejected');
+    }
+  }catch(err){
+    console.error('EmailJS error', err);
+    alert('Erreur envoi email — voir console');
+  }finally{ emailSend.disabled = false; }
+});
+
+/* =========================
+   Filters / Search / Sort / Export / Bulk
+   ========================= */
+
+function applyFilters(){
+  let filtered = submissions.slice();
+  const q = searchInput.value.trim().toLowerCase();
+  if(q){
+    filtered = filtered.filter(s=>{
+      const d = s.data;
+      return (d.fullname||'').toLowerCase().includes(q) ||
+             (d.email||'').toLowerCase().includes(q) ||
+             (d.company||'').toLowerCase().includes(q);
+    });
+  }
+  const status = filterStatus.value;
+  if(status !== 'all'){
+    filtered = filtered.filter(s=> (s.data.status||'pending') === status );
+  }
+  if(sortBy.value === 'newest') filtered.sort((a,b)=> (b.data.timestamp?.seconds||0) - (a.data.timestamp?.seconds||0));
+  else filtered.sort((a,b)=> (a.data.timestamp?.seconds||0) - (b.data.timestamp?.seconds||0));
+
+  return filtered;
+}
+
+exportBtn.addEventListener('click', ()=> {
+  const rows = applyFilters().map(s=>{
+    const d = s.data;
+    return {
+      id: s.id,
+      name: d.fullname||'',
+      email: d.email||'',
+      company: d.company||'',
+      objective: d.objective||'',
+      budget: d.budget||'',
+      status: d.status||'pending',
+      date: formatDate(d.timestamp)
+    };
+  });
+  if(!rows.length){ showToast('Rien à exporter'); return; }
+  const csv = [
+    Object.keys(rows[0]).join(','),
+    ...rows.map(r => Object.values(r).map(v=>`"${String(v).replace(/"/g,'""')}"`).join(','))
+  ].join('\n');
+  const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = `submissions_${Date.now()}.csv`; a.click(); URL.revokeObjectURL(url);
+  showToast('Exporté');
+});
+
+bulkBtn.addEventListener('click', async ()=>{
+  if(!selectionSet.size){ alert('Sélectionne au moins une soumission (checkbox).'); return; }
+  const action = prompt('Action (accept / reject /delete):', 'accept');
+  if(!action) return;
+  for(const id of selectionSet){
+    if(action==='delete'){ await deleteDoc(doc(db, "submissions", id)); }
+    else if(action==='accept'){ await updateStatus({ id } .id || id, 'accepted'); }
+    else if(action==='reject'){ await updateStatus({ id } .id || id, 'rejected'); }
+  }
+  selectionSet.clear();
+  showToast('Actions effectuées');
+});
+
+/* =========================
+   Real-time listener
+   ========================= */
+const q = query(submissionsRef, orderBy('timestamp', 'desc'));
+onSnapshot(q, snapshot => {
+  submissions = [];
+  snapshot.forEach(snap => {
+    submissions.push({ id: snap.id, data: snap.data() });
+  });
+  // update stats
+  countTotal.textContent = submissions.length;
+  countPending.textContent = submissions.filter(s=> (s.data.status||'pending')==='pending').length;
+  countAccepted.textContent = submissions.filter(s=> s.data.status==='accepted').length;
+  countRejected.textContent = submissions.filter(s=> s.data.status==='rejected').length;
+  lastUpdated.textContent = new Date().toLocaleString();
+
+  // render filtered
+  const list = applyFilters();
+  renderList(list);
+});
+
+/* =========================
+   Search/filters events
+   ========================= */
+searchInput.addEventListener('input', ()=> renderList(applyFilters()));
+filterStatus.addEventListener('change', ()=> renderList(applyFilters()));
+sortBy.addEventListener('change', ()=> renderList(applyFilters()));
+
+/* =========================
+   Helper: firebase doc() wrapper for update/delete used above
+   ========================= */
+import { doc as fbDoc } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-firestore.js";
+function docRef(dbRef, id){ return fbDoc(dbRef, id); }
+
+// small fix for earlier functions referencing doc(db,..) directly:
+function doc(dbInstance, collectionName, id){
+  return fbDoc(dbInstance, collectionName, id);
+}
+
+/* =========================
+   End
+   ========================= */
+</script>
+</body>
+</html>

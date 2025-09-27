@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ONTech-cloud | Admin — Contacts</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg-1: #0d1117;
+      --bg-2: #1b2430;
+      --card: #111827;
+      --muted: #94a3b8;
+      --accent: #f0c75e;
+      --panel-bg: #0f1724;
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: 'Poppins', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: linear-gradient(180deg,var(--bg-1),var(--bg-2));
+      color: #e6eef8;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+
+    header{
+      position:fixed;
+      top:0; left:0; right:0;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:20px;
+      padding:18px 30px;
+      background: rgba(0,0,0,0.45);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+      z-index:1000;
+    }
+    header h1{
+      font-size:1.15rem;
+      color:var(--accent);
+      margin:0;
+      letter-spacing:0.6px;
+    }
+    header .actions{display:flex;gap:12px;align-items:center}
+    .btn{
+      background:#111827;
+      border:1px solid rgba(255,255,255,0.04);
+      color: #e6eef8;
+      padding:8px 12px;
+      border-radius:10px;
+      font-weight:600;
+      cursor:pointer;
+    }
+    .btn:hover{transform:translateY(-3px); box-shadow: 0 8px 18px rgba(0,0,0,0.4)}
+
+    main{
+      padding:110px 20px 40px; /* leave space for fixed header */
+      max-width:1100px;
+      margin:0 auto;
+    }
+
+    .heading{
+      text-align:center;
+      margin-bottom:28px;
+    }
+    .heading h2{
+      margin:0;
+      color:var(--accent);
+      font-size:2rem;
+    }
+    .heading p{margin-top:8px;color:#b9c6d9; max-width:820px; margin-left:auto;margin-right:auto}
+
+    .controls{
+      display:flex;
+      justify-content:flex-end;
+      gap:12px;
+      margin-bottom:18px;
+    }
+
+    /* Accordion list */
+    .list{
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+    }
+
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius:14px;
+      overflow:hidden;
+      border: 1px solid rgba(255,255,255,0.04);
+      box-shadow: 0 10px 30px rgba(2,6,23,0.6);
+    }
+
+    .card-header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding:16px;
+      cursor:pointer;
+      user-select:none;
+    }
+    .card-left{
+      display:flex;
+      gap:12px;
+      align-items:center;
+    }
+    .avatar{
+      width:48px;height:48px;border-radius:10px;
+      background: linear-gradient(135deg,#0b1220,#18202b);
+      display:flex;align-items:center;justify-content:center;
+      color:var(--accent);
+      font-weight:700;
+      font-size:0.95rem;
+      border:1px solid rgba(255,255,255,0.03);
+    }
+    .meta{
+      display:flex;flex-direction:column;
+    }
+    .meta .name{font-weight:700;color:#fff;font-size:1rem}
+    .meta .sub{font-size:0.85rem;color:var(--muted); margin-top:4px}
+
+    .card-right{
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .chip{
+      background: rgba(240,199,94,0.12);
+      color: var(--accent);
+      padding:8px 12px;
+      border-radius:999px;
+      font-weight:700;
+      font-size:0.85rem;
+      border:1px solid rgba(240,199,94,0.08);
+    }
+
+    .chev{
+      width:36px;height:36px;border-radius:10px;
+      display:flex;align-items:center;justify-content:center;
+      background: rgba(255,255,255,0.02);
+      transition: transform 0.25s ease;
+      color:#cfdff3;
+    }
+
+    /* Panel (collapsed by default) */
+    .panel{
+      max-height:0;
+      overflow:hidden;
+      transition: max-height 0.34s cubic-bezier(.2,.8,.2,1);
+      border-top: 1px solid rgba(255,255,255,0.02);
+      background: var(--panel-bg);
+      padding: 0 16px;
+    }
+    .panel-inner{
+      padding:16px;
+      color:#dbe9ff;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+
+    .field{display:flex;gap:10px;align-items:flex-start}
+    .field strong{min-width:90px;color:var(--muted);font-weight:600}
+    .message{
+      background: rgba(255,255,255,0.02);
+      padding:12px;
+      border-radius:10px;
+      white-space: pre-wrap;
+      word-break:break-word;
+      color:#e9f3ff;
+      max-height:320px;
+      overflow:auto;
+      border:1px solid rgba(255,255,255,0.02);
+    }
+
+    .small{
+      color:var(--muted);
+      font-size:0.9rem;
+    }
+
+    .no-messages{
+      text-align:center;
+      padding:32px;
+      color:var(--muted);
+      background: rgba(255,255,255,0.01);
+      border-radius:10px;
+    }
+
+    /* rotate chevron when expanded */
+    .card.expanded .chev{ transform: rotate(180deg); background: rgba(240,199,94,0.08); color:var(--accent) }
+
+    /* Responsive */
+    @media (max-width:640px){
+      .avatar{width:44px;height:44px}
+      .chip{display:none}
+      .card-header{padding:12px}
+      .panel-inner{padding:12px}
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>ONTech-cloud — Admin</h1>
+    <div class="actions">
+      <button class="btn" id="refreshBtn" title="Rafraîchir">🔄 Rafraîchir</button>
+      <a class="btn" href="admin.html" title="Retour dashboard">⬅ Dashboard</a>
+    </div>
+  </header>
+
+  <main>
+    <div class="heading">
+      <h2>Messages reçus</h2>
+      <p>Liste des messages envoyés depuis le formulaire de contact. Cliquez sur une ligne pour voir le détail complet (message complet affiché dans un panneau avec scroll si nécessaire).</p>
+    </div>
+
+    <div class="controls" style="margin-bottom:12px; display:flex; justify-content:flex-end;">
+      <!-- espace pour filtres futurs -->
+    </div>
+
+    <section class="list" id="list">
+      <div class="no-messages" id="loading">Chargement des messages…</div>
+    </section>
+
+  </main>
+
+  <footer style="text-align:center;padding:24px;color:var(--muted)">
+    © 2025 ONTech-cloud — Admin
+  </footer>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getFirestore, collection, getDocs, orderBy, query } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+    // --- CONFIG FIREBASE (remplace si besoin) ---
+    const firebaseConfig = {
+      apiKey: "AIzaSyAxoNfxPK1GHlHjk9OsNiC2fd8Ro_r2-i8",
+      authDomain: "ontech-cloud-official-web.firebaseapp.com",
+      projectId: "ontech-cloud-official-web",
+      storageBucket: "ontech-cloud-official-web.firebasestorage.app",
+      messagingSenderId: "810402648307",
+      appId: "1:810402648307:web:b7c88e0b69073cea18a786"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const listEl = document.getElementById('list');
+    const loadingEl = document.getElementById('loading');
+    const refreshBtn = document.getElementById('refreshBtn');
+
+    refreshBtn.addEventListener('click', () => loadContacts());
+
+    async function loadContacts(){
+      listEl.innerHTML = '';
+      listEl.appendChild(loadingEl);
+      loadingEl.textContent = 'Chargement des messages…';
+
+      try {
+        // Query contacts ordered by timestamp desc (plus récent en haut)
+        const q = query(collection(db, "contacts"), orderBy("timestamp", "desc"));
+        const snap = await getDocs(q);
+
+        if (snap.empty) {
+          loadingEl.textContent = 'Aucun message reçu.';
+          return;
+        }
+
+        // Clear
+        listEl.innerHTML = '';
+
+        snap.forEach((docSnap, idx) => {
+          const data = docSnap.data();
+          // safe getters
+          const name = data.name || '—';
+          const email = data.email || '—';
+          const message = data.message || '—';
+          let dateText = '—';
+          if (data.timestamp && typeof data.timestamp.toDate === 'function') {
+            dateText = data.timestamp.toDate().toLocaleString('fr-FR');
+          } else if (data.timestamp instanceof Date) {
+            dateText = data.timestamp.toLocaleString('fr-FR');
+          }
+
+          const card = createAccordionCard({ id: docSnap.id, name, email, message, dateText, index: idx });
+          listEl.appendChild(card);
+        });
+
+      } catch (err) {
+        console.error('Erreur lors du chargement des contacts', err);
+        listEl.innerHTML = '';
+        const errDiv = document.createElement('div');
+        errDiv.className = 'no-messages';
+        errDiv.textContent = '❌ Erreur lors du chargement des messages. Ouvre la console pour voir l\'erreur.';
+        listEl.appendChild(errDiv);
+      }
+    }
+
+    function createAccordionCard({ id, name, email, message, dateText, index }){
+      const card = document.createElement('article');
+      card.className = 'card';
+      // header
+      const header = document.createElement('div');
+      header.className = 'card-header';
+      header.setAttribute('role','button');
+      header.tabIndex = 0;
+
+      const left = document.createElement('div'); left.className = 'card-left';
+      const avatar = document.createElement('div'); avatar.className = 'avatar';
+      // initials
+      const initials = name.split(' ').map(s => s[0]).slice(0,2).join('').toUpperCase() || 'U';
+      avatar.textContent = initials;
+      const meta = document.createElement('div'); meta.className = 'meta';
+      const n = document.createElement('div'); n.className = 'name'; n.textContent = name;
+      const sub = document.createElement('div'); sub.className = 'sub'; sub.textContent = email + ' • ' + dateText;
+      meta.appendChild(n); meta.appendChild(sub);
+      left.appendChild(avatar); left.appendChild(meta);
+
+      const right = document.createElement('div'); right.className = 'card-right';
+      const chip = document.createElement('div'); chip.className = 'chip'; chip.textContent = 'Contact';
+      const chev = document.createElement('div'); chev.className = 'chev';
+      chev.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+      right.appendChild(chip); right.appendChild(chev);
+
+      header.appendChild(left); header.appendChild(right);
+
+      // panel
+      const panel = document.createElement('div'); panel.className = 'panel';
+      const panelInner = document.createElement('div'); panelInner.className = 'panel-inner';
+
+      // fields
+      const fEmail = document.createElement('div'); fEmail.className = 'field';
+      const labelEmail = document.createElement('strong'); labelEmail.textContent = 'Email';
+      const valEmail = document.createElement('div'); valEmail.className = 'small'; valEmail.textContent = email;
+      const copyBtn = document.createElement('button'); copyBtn.className = 'btn'; copyBtn.style.padding='6px 10px'; copyBtn.style.fontSize='0.85rem'; copyBtn.textContent = 'Copier';
+      copyBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        navigator.clipboard?.writeText(email).then(()=> {
+          copyBtn.textContent = 'Copié ✓';
+          setTimeout(()=> copyBtn.textContent = 'Copier', 1500);
+        }).catch(()=> {
+          copyBtn.textContent = 'Erreur';
+          setTimeout(()=> copyBtn.textContent = 'Copier', 1500);
+        });
+      });
+      const emailRow = document.createElement('div'); emailRow.style.display = 'flex'; emailRow.style.alignItems='center'; emailRow.style.gap='10px';
+      emailRow.appendChild(valEmail); emailRow.appendChild(copyBtn);
+      fEmail.appendChild(labelEmail); fEmail.appendChild(emailRow);
+
+      const fDate = document.createElement('div'); fDate.className = 'field';
+      const labelDate = document.createElement('strong'); labelDate.textContent = 'Date';
+      const valDate = document.createElement('div'); valDate.className = 'small'; valDate.textContent = dateText;
+      fDate.appendChild(labelDate); fDate.appendChild(valDate);
+
+      const fMsg = document.createElement('div'); fMsg.className = 'field';
+      const labelMsg = document.createElement('strong'); labelMsg.textContent = 'Message';
+      const msgBox = document.createElement('div'); msgBox.className = 'message'; msgBox.textContent = message;
+      fMsg.appendChild(labelMsg); fMsg.appendChild(msgBox);
+
+      panelInner.appendChild(fEmail);
+      panelInner.appendChild(fDate);
+      panelInner.appendChild(fMsg);
+
+      panel.appendChild(panelInner);
+
+      // assemble card
+      card.appendChild(header);
+      card.appendChild(panel);
+
+      // toggle logic
+      const toggle = (evt) => {
+        const isExpanded = card.classList.contains('expanded');
+        if (isExpanded) {
+          card.classList.remove('expanded');
+          // collapse
+          panel.style.maxHeight = '0';
+        } else {
+          // expand (set maxHeight to inner scroll height but cap overall panelInner scroll)
+          card.classList.add('expanded');
+          // temporarily set to auto to measure
+          panel.style.maxHeight = panel.scrollHeight + 'px';
+        }
+      };
+
+      header.addEventListener('click', toggle);
+      header.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); } });
+
+      return card;
+    }
+
+    // initial load
+    loadContacts();
+  </script>
+</body>
+</html>

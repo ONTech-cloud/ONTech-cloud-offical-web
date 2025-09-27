@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Soumission de projet - ONTech-cloud</title>
+<style>
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: #121212;
+    color: #eee;
+    margin:0;
+    padding:0;
+  }
+  .container {
+    max-width: 600px;
+    margin: 40px auto;
+    background:#1e1e1e;
+    border-radius:20px;
+    padding:30px;
+    box-shadow:0 8px 25px rgba(0,0,0,0.7);
+    transition: all 0.3s ease;
+  }
+  .container:hover {
+    transform: translateY(-5px);
+    box-shadow:0 12px 30px rgba(0,0,0,0.9);
+  }
+  h2 {
+    text-align:center;
+    margin-bottom:20px;
+    color:#fff;
+  }
+  .progress-bar {
+    display:flex;
+    margin-bottom:30px;
+    height:8px;
+    background:#333;
+    border-radius:8px;
+    overflow:hidden;
+  }
+  .progress {
+    height:100%;
+    width:0%;
+    background: linear-gradient(135deg,#00d4ff,#007bff);
+    transition: width 0.3s ease;
+  }
+  .form-step {
+    display:none;
+    animation: fadeIn 0.5s ease;
+  }
+  .form-step.active {
+    display:block;
+  }
+  @keyframes fadeIn {
+    from {opacity:0; transform:translateY(10px);}
+    to {opacity:1; transform:translateY(0);}
+  }
+  label {
+    display:block;
+    margin:12px 0 6px;
+    font-weight:500;
+  }
+  input, select, textarea {
+    width:100%;
+    padding:12px;
+    border-radius:12px;
+    border:none;
+    background:#2a2a2a;
+    color:#eee;
+    font-size:14px;
+    transition: all 0.3s ease;
+  }
+  input:focus, select:focus, textarea:focus {
+    outline:none;
+    box-shadow:0 0 0 2px #00d4ff;
+  }
+  button {
+    background:linear-gradient(135deg,#007bff,#00d4ff);
+    border:none;
+    color:white;
+    padding:12px 24px;
+    border-radius:12px;
+    font-size:14px;
+    cursor:pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    margin-top:20px;
+  }
+  button:hover {
+    transform:scale(1.05);
+    box-shadow:0 4px 15px rgba(0,212,255,0.6);
+  }
+  .checkbox-group {
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    margin-top:8px;
+  }
+  .checkbox-group label {
+    background:#2a2a2a;
+    padding:10px 15px;
+    border-radius:12px;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    transition: all 0.3s;
+  }
+  .checkbox-group input {display:none;}
+  .checkbox-group input:checked + span {
+    color:#00d4ff;
+    font-weight:bold;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h2>Soumission de projet</h2>
+  <div class="progress-bar"><div class="progress" id="progress"></div></div>
+
+  <form id="form">
+    <!-- Étapes -->
+    <div class="form-step active">
+      <label>Langue préférée</label>
+      <select name="language" required>
+        <option value="">Sélectionner</option>
+        <option>Français</option>
+        <option>English</option>
+      </select>
+    </div>
+
+    <div class="form-step">
+      <label>Nom complet</label>
+      <input type="text" name="fullname" required>
+    </div>
+
+    <div class="form-step">
+      <label>Email</label>
+      <input type="email" name="email" required>
+    </div>
+
+    <div class="form-step">
+      <label>Téléphone</label>
+      <input type="text" name="phone" required>
+    </div>
+
+    <div class="form-step">
+      <label>Nom de l’entreprise</label>
+      <input type="text" name="company" required>
+    </div>
+
+    <div class="form-step">
+      <label>Comment nous avez-vous connus ?</label>
+      <div class="checkbox-group">
+        <label><input type="checkbox" name="reference" value="Réseaux sociaux"><span>📱 Réseaux sociaux</span></label>
+        <label><input type="checkbox" name="reference" value="Google"><span>🔍 Google</span></label>
+        <label><input type="checkbox" name="reference" value="Recommandation"><span>🤝 Recommandation</span></label>
+        <label><input type="checkbox" name="reference" value="Autre"><span>📝 Autre</span></label>
+      </div>
+    </div>
+
+    <div class="form-step">
+      <label>Type de service recherché</label>
+      <div class="checkbox-group">
+        <label><input type="checkbox" name="serviceType" value="Site web"><span>💻 Site web</span></label>
+        <label><input type="checkbox" name="serviceType" value="Application mobile"><span>📱 Application mobile</span></label>
+        <label><input type="checkbox" name="serviceType" value="Logiciel"><span>🖥️ Logiciel</span></label>
+      </div>
+    </div>
+
+    <div class="form-step">
+      <label>Objectif principal</label>
+      <input type="text" name="objective" required>
+    </div>
+
+    <div class="form-step">
+      <label>Description détaillée du projet</label>
+      <textarea name="description" required></textarea>
+    </div>
+
+    <div class="form-step">
+      <label>Budget estimé</label>
+      <select name="budget" required>
+        <option value="">Sélectionner</option>
+        <option>&lt; 1 000$</option>
+        <option>1 000$ – 5 000$</option>
+        <option>5 000$ – 10 000$</option>
+        <option>&gt; 10 000$</option>
+      </select>
+    </div>
+
+    <div class="form-step">
+      <label>Délai souhaité</label>
+      <select name="deadline" required>
+        <option value="">Sélectionner</option>
+        <option>Urgent</option>
+        <option>1 mois</option>
+        <option>3 mois</option>
+        <option>Flexible</option>
+      </select>
+    </div>
+
+    <div class="form-step">
+      <label>Priorité du projet</label>
+      <select name="priority" required>
+        <option value="">Sélectionner</option>
+        <option>Élevée</option>
+        <option>Moyenne</option>
+        <option>Faible</option>
+      </select>
+    </div>
+
+    <div class="form-step">
+      <label>Confirmation</label>
+      <input type="checkbox" name="confirm" required> Je confirme que les informations sont exactes
+    </div>
+
+    <div style="margin-top:20px;">
+      <button type="button" id="prevBtn" style="display:none;">Précédent</button>
+      <button type="button" id="nextBtn">Suivant</button>
+      <button type="submit" id="submitBtn" style="display:none;">Soumettre</button>
+    </div>
+  </form>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
+  import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAxoNfxPK1GHlHjk9OsNiC2fd8Ro_r2-i8",
+    authDomain: "ontech-cloud-official-web.firebaseapp.com",
+    projectId: "ontech-cloud-official-web",
+    storageBucket: "ontech-cloud-official-web.firebasestorage.app",
+    messagingSenderId: "810402648307",
+    appId: "1:810402648307:web:b7c88e0b69073cea18a786"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  const steps = document.querySelectorAll('.form-step');
+  const progress = document.getElementById('progress');
+  const nextBtn = document.getElementById('nextBtn');
+  const prevBtn = document.getElementById('prevBtn');
+  const submitBtn = document.getElementById('submitBtn');
+  let currentStep = 0;
+
+  function updateForm() {
+    steps.forEach((step,index)=>step.classList.toggle('active',index===currentStep));
+    progress.style.width = ((currentStep+1)/steps.length*100)+'%';
+    prevBtn.style.display = currentStep>0?'inline-block':'none';
+    nextBtn.style.display = currentStep<steps.length-1?'inline-block':'none';
+    submitBtn.style.display = currentStep===steps.length-1?'inline-block':'none';
+  }
+
+  nextBtn.addEventListener('click',()=>{
+    const inputs = steps[currentStep].querySelectorAll('input,select,textarea');
+    for(let input of inputs){
+      if((input.type==='checkbox' || input.type==='radio') && !input.checked) continue;
+      if(!input.checkValidity()){ input.reportValidity(); return; }
+    }
+    currentStep++;
+    updateForm();
+  });
+
+  prevBtn.addEventListener('click',()=>{
+    currentStep--;
+    updateForm();
+  });
+
+  document.getElementById('form').addEventListener('submit',async e=>{
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    let data={};
+    formData.forEach((value,key)=>{
+      if(data[key]){
+        if(Array.isArray(data[key])) data[key].push(value);
+        else data[key]=[data[key],value];
+      }else data[key]=value;
+    });
+
+    try{
+      await addDoc(collection(db,"submissions"),data);
+      alert("Soumission enregistrée avec succès !");
+      e.target.reset();
+      currentStep=0;
+      updateForm();
+    }catch(err){
+      alert("Erreur lors de l'enregistrement : "+err);
+    }
+  });
+
+  updateForm();
+</script>
+
+</body>
+</html>

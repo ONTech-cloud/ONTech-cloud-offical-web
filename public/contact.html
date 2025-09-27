@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ONTech-cloud | Contact</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #0f172a;
+      color: #f8fafc;
+    }
+
+    header {
+      background: #1e293b;
+      padding: 20px 50px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    header h1 {
+      font-size: 1.5rem;
+      color: #38bdf8;
+    }
+
+    nav a {
+      color: #f8fafc;
+      text-decoration: none;
+      margin-left: 20px;
+      font-weight: 500;
+      transition: color 0.3s ease;
+    }
+
+    nav a:hover {
+      color: #38bdf8;
+    }
+
+    .hero {
+      text-align: center;
+      padding: 80px 20px;
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+    }
+
+    .hero h2 {
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+      color: #38bdf8;
+    }
+
+    .hero p {
+      font-size: 1.1rem;
+      color: #cbd5e1;
+    }
+
+    .contact-container {
+      max-width: 700px;
+      margin: 50px auto;
+      background: #1e293b;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+    }
+
+    .contact-container h3 {
+      text-align: center;
+      font-size: 1.8rem;
+      margin-bottom: 20px;
+      color: #38bdf8;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+    }
+
+    input, textarea {
+      margin-bottom: 15px;
+      padding: 14px;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      background: #334155;
+      color: #f8fafc;
+      resize: none;
+    }
+
+    input:focus, textarea:focus {
+      outline: 2px solid #38bdf8;
+    }
+
+    button {
+      padding: 14px;
+      border: none;
+      border-radius: 8px;
+      background: #38bdf8;
+      color: #0f172a;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background: #0ea5e9;
+    }
+
+    #successMsg {
+      text-align: center;
+      margin-top: 20px;
+      display: none;
+      font-weight: bold;
+      color: #22c55e;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      margin-top: 50px;
+      background: #1e293b;
+      font-size: 0.9rem;
+      color: #94a3b8;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>ONTech-cloud</h1>
+    <nav>
+      <a href="index.html">Accueil</a>
+      <a href="realisations.html">Réalisations</a>
+      <a href="services.html">Services</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <h2>Contactez-nous</h2>
+    <p>Une idée ? Un projet ? Nous serons ravis d’en discuter avec vous.</p>
+  </section>
+
+  <section class="contact-container">
+    <h3>Envoyez-nous un message</h3>
+    <form id="contactForm">
+      <input type="text" id="name" placeholder="Nom complet" required />
+      <input type="email" id="email" placeholder="Adresse e-mail" required />
+      <textarea id="message" placeholder="Votre message..." rows="6" required></textarea>
+      <button type="submit">Envoyer</button>
+    </form>
+    <p id="successMsg">✅ Message envoyé avec succès !</p>
+  </section>
+
+  <footer>
+    © 2025 ONTech-cloud. Tous droits réservés.
+  </footer>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+    // Config Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyAxoNfxPK1GHlHjk9OsNiC2fd8Ro_r2-i8",
+      authDomain: "ontech-cloud-official-web.firebaseapp.com",
+      projectId: "ontech-cloud-official-web",
+      storageBucket: "ontech-cloud-official-web.firebasestorage.app",
+      messagingSenderId: "810402648307",
+      appId: "1:810402648307:web:b7c88e0b69073cea18a786"
+    };
+
+    // Init Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // Gestion formulaire
+    const contactForm = document.getElementById("contactForm");
+    const successMsg = document.getElementById("successMsg");
+
+    contactForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      try {
+        await addDoc(collection(db, "contacts"), {
+          name: document.getElementById("name").value,
+          email: document.getElementById("email").value,
+          message: document.getElementById("message").value,
+          timestamp: new Date()
+        });
+
+        successMsg.style.display = "block";
+        contactForm.reset();
+      } catch (error) {
+        console.error("Erreur :", error);
+        alert("❌ Erreur lors de l’envoi du message");
+      }
+    });
+  </script>
+
+</body>
+</html>
